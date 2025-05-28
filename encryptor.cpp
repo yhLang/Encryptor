@@ -55,7 +55,12 @@ int main() {
 
     std::string output_name;
     if (op == 1) {
-        output_name = file_name + ".enc";
+        auto file_name_without_suf = file_name; [&] {
+            auto it = file_name.find_last_of('.');
+            if (it == file_name.npos) {return ;}
+            file_name_without_suf = file_name.substr(0, it);
+        }();
+        output_name = file_name_without_suf + ".enc";
     } else {
         // 解密时如果原文件名以 .enc 结尾则去掉，否则加 .dec
         if ((file_name.size() >= 4 and file_name.substr(file_name.size() - 4) == ".enc")) {
@@ -65,8 +70,7 @@ int main() {
             return (it != file_name.npos);
         }()) {
             auto it = file_name.find_last_of('.');
-            auto del = ssize(file_name) - it;
-            output_name = file_name.substr(0, file_name.size() - del);
+            output_name = file_name.substr(0, it);
         } else {
             output_name = file_name + ".dec";
         }
